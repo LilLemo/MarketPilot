@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listas Salvas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { height: 100vh; display: flex; justify-content: center; align-items: center; background-color: #1a2a5f; }
+        .container { width: 90%; max-width: 500px; display: flex; flex-direction: column; }
+        .title { background-color: #3b5bb3; color: white; padding: 12px; border-radius: 10px; margin-bottom: 20px; text-align: center; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2); border: 2px solid #5f7ed7; }
+        .content-box { background-color: #4375b6; border-radius: 10px; padding: 15px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); min-height: 400px; max-height: 70vh; overflow-y: auto; }
+        .list-item { background-color: #a3d6f5; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
+        .list-item:hover { background-color: #8ecfef; }
+        .list-left { display: flex; flex-direction: column; }
+        .list-title { font-weight: bold; }
+        .list-user { font-size: 12px; color: #1a2a5f; margin-top: 3px; }
+        .list-right { display: flex; align-items: center; gap: 10px; }
+        .delete-btn, .edit-btn { width: 24px; height: 24px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: none; color: white; cursor: pointer; }
+        .delete-btn { background-color: #d13b3b; }
+        .edit-btn { background-color: #2a7e2e; }
+        .list-details { display: none; background-color: #d9efff; border-radius: 10px; padding: 15px; margin: 5px 0; }
+        .list-details.active { display: block; }
+        .category { margin-bottom: 15px; }
+        .category-title { font-weight: bold; margin-bottom: 5px; color: #1a2a5f; }
+        .item-list { list-style-type: none; margin-left: 10px; }
+        .item-list li { margin-bottom: 5px; display: flex; justify-content: space-between; }
+        .total-price { margin-top: 15px; padding-top: 10px; border-top: 1px solid #7abbdf; font-weight: bold; text-align: right; color: #1a2a5f; }
+        .navigation-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .nav-button { background-color: #3b5bb3; color: white; padding: 10px 15px; border-radius: 20px; cursor: pointer; border: none; display: flex; align-items: center; gap: 5px; font-weight: bold; }
+        .price { color: #2a7e2e; font-weight: bold; }
+        .save-button { background-color: #2a7e2e; color: white; padding: 15px 30px; border-radius: 30px; cursor: pointer; align-self: flex-end; font-size: 18px; border: none; font-weight: bold; }
+        .badge { font-size: 12px; padding: 3px 8px; border-radius: 10px; }
+        .badge-nova { background-color: #7abbdf; color: #1a2a5f; }
+        .badge-mercado { background-color: #2a7e2e; color: white; }
+        .empty-message { text-align: center; color: white; padding: 30px; font-style: italic; }
+        .details-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #7abbdf; padding-bottom: 10px; }
+        .details-title { font-weight: bold; color: #1a2a5f; }
+        .details-info { font-size: 12px; color: #506680; }
+        .add-item-form { margin-top: 15px; padding-top: 15px; border-top: 1px solid #7abbdf; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #1a2a5f; font-weight: bold; }
+        .form-group select, .form-group input { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #7abbdf; }
+        .form-buttons { display: flex; justify-content: space-between; margin-top: 10px; }
+        .form-button { padding: 8px 15px; border-radius: 5px; cursor: pointer; border: none; font-weight: bold; }
+        .add-button { background-color: #2a7e2e; color: white; }
+        .cancel-button { background-color: #d13b3b; color: white; }
+        
+        /* User identification styles */
+        .user-legend {
+            background-color: #a3d6f5;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        .user-legend-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #1a2a5f;
+            text-align: center;
+        }
+        .user-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            display: inline-block;
+        }
+        .dot-leo { background-color: #FF0000; }
+        .dot-yumi { background-color: #FFCC00; }
+        .dot-kdu-caio { background-color: #9900CC; }
+        
+        /* Item user indication */
+        .item-with-user {
+            display: flex;
+            align-items: center;
+        }
+        .item-user-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+        .user-legend {
+    background-color: #a3d6f5;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-legend-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #1a2a5f;
+    text-align: center;
+    border-bottom: 1px solid #7abbdf;
+    padding-bottom: 5px;
+}
+
+.user-indicators {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 5px;
+}
+
+.user-indicator {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    padding: 3px 8px;
+    border-radius: 15px;
+    background-color: rgba(255,255,255,0.5);
+}
+
+.color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    display: inline-block;
+    box-shadow: 0 0 3px rgba(0,0,0,0.3);
+}
+
+.dot-leo { background-color: #FF0000; }
+.dot-yumi { background-color: #FFCC00; }
+.dot-kdu-caio { background-color: #9900CC; }
+
+/* Melhorar a aparência dos itens com usuários */
+.item-with-user {
+    display: flex;
+    align-items: center;
+    padding-left: 3px;
+}
+
+.item-user-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    flex-shrink: 0;
+    box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
+
+/* Estilo para o botão de histórico */
+.history-button {
+    background-color: #3b5bb3;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 10px;
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+}
+
+.history-button:hover {
+    background-color: #4d6bc3;
+}
+
+/* Adicionar indicador de último editor */
+.last-editor {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 12px;
+    color: #1a2a5f;
+    font-style: italic;
+    margin-top: 10px;
+    align-items: center;
+}
+
+.last-editor .color-dot {
+    width: 8px;
+    height: 8px;
+    margin-right: 5px;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navigation-buttons">
+            <button class="nav-button" onclick="goBack()">← Voltar</button>
+            <button class="nav-button" onclick="goHome()">⌂ Home</button>
+        </div>
+        
+        <div class="title">Listas Salvas</div>
+        
+        <div class="content-box" id="savedListsContainer">
+            <!-- Listas salvas serão carregadas aqui -->
+        </div>
+        
+        <button class="save-button" onclick="exportLists()">SALVAR ✓</button>
+    </div>
+    
+    <script>
+        // Função para carregar todas as listas salvas
+        function loadSavedLists() {
+            
+            updateUserTracking();
+    
+    const container = document.getElementById('savedListsContainer');
+    const savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+            
+            container.innerHTML = '';
+            
+            if (savedLists.length === 0) {
+                container.innerHTML = '<div class="empty-message">Nenhuma lista salva encontrada.</div>';
+                return;
+            }
+            
+            savedLists.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            savedLists.forEach((list, index) => {
+                const listElement = document.createElement('div');
+                listElement.classList.add('list-item');
+                listElement.setAttribute('data-index', index);
+                
+                const isMercadoList = list.hasOwnProperty('totalPrice');
+                const listDate = list.timestamp ? new Date(list.timestamp).toLocaleDateString() : 'Data desconhecida';
+                const username = list.username || "Usuário não identificado";
+                
+                listElement.innerHTML = `
+                    <div class="list-left">
+                        <div class="list-title">${list.name || `Lista mercado ${listDate}`}</div>
+                        <div class="list-user">Por: ${username}</div>
+                    </div>
+                    <div class="list-right">
+                        <span class="badge ${isMercadoList ? 'badge-mercado' : 'badge-nova'}">
+                            ${isMercadoList ? 'Mercado' : 'Nova'}
+                        </span>
+                        <button class="edit-btn" onclick="editList(${index}, event)">✎</button>
+                        <button class="delete-btn" onclick="deleteList(${index}, event)">×</button>
+                    </div>
+                `;
+                
+                listElement.addEventListener('click', (event) => {
+                    if (!event.target.classList.contains('delete-btn') && 
+                        !event.target.classList.contains('edit-btn')) {
+                        toggleListDetails(index);
+                    }
+                });
+                
+                const detailsElement = document.createElement('div');
+                detailsElement.classList.add('list-details');
+                detailsElement.id = `list-details-${index}`;
+                
+                const formattedDate = list.timestamp ? 
+                    new Date(list.timestamp).toLocaleString('pt-BR', { 
+                        day: '2-digit', month: '2-digit', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit'
+                    }) : 'Data desconhecida';
+                
+                // Add user legend to each list detail
+                let detailsContent = `
+                <div class="user-legend">
+                    <div class="user-legend-title">Identificação de Usuários</div>
+                     <div class="user-indicators">
+                     <div class="user-indicator"><span class="color-dot dot-leo"></span> Leo</div>
+                     <div class="user-indicator"><span class="color-dot dot-yumi"></span> Yumi</div>
+                  <div class="user-indicator"><span class="color-dot dot-kdu-caio"></span> Kdu/Caio</div>
+                </div>
+            </div>
+                    <div class="details-header">
+                        <div class="details-title">${list.name || `Lista mercado ${listDate}`}</div>
+                        <div class="details-info">
+                            Criado por ${username}<br>
+                            ${formattedDate}
+                        </div>
+                    </div>
+                `;
+                
+                if (list.carnes && list.carnes.trim() !== '') {
+                    detailsContent += createCategoryHTML('Carnes, Aves e Peixes', list.carnes, list.carnesPrecos, list.carnesUsers || []);
+                }
+                
+                if (list.hortifruti && list.hortifruti.trim() !== '') {
+                    detailsContent += createCategoryHTML('Hortifruti', list.hortifruti, list.hortifrutiPrecos, list.hortifrutiUsers || []);
+                }
+                
+                if (list.laticinios && list.laticinios.trim() !== '') {
+                    detailsContent += createCategoryHTML('Laticínios e Ovos', list.laticinios, list.laticiniosPrecos, list.laticiniosUsers || []);
+                }
+                
+                if (list.mercearia && list.mercearia.trim() !== '') {
+                    detailsContent += createCategoryHTML('Mercearia, Enlatados e Grãos', list.mercearia, list.merceariaPrecos, list.merceariaUsers || []);
+                }
+                
+                if (list.limpeza && list.limpeza.trim() !== '') {
+                    detailsContent += createCategoryHTML('Produtos de Limpeza e Higiene', list.limpeza, list.limpezaPrecos, list.limpezaUsers || []);
+                }
+                
+                if (isMercadoList) {
+                    detailsContent += `
+                        <div class="total-price">
+                            Valor Total: R$ ${list.totalPrice.toFixed(2)}
+                        </div>
+                    `;
+                }
+                
+                detailsElement.innerHTML = detailsContent;
+                
+                container.appendChild(listElement);
+                container.appendChild(detailsElement);
+            });
+        }
+        
+        function getUserColorClass(user) {
+            if (!user) return '';
+            switch (user.toLowerCase()) {
+                case 'leo': return 'dot-leo';
+                case 'yumi': return 'dot-yumi';
+                case 'kdu-caio': return 'dot-kdu-caio';
+                default: return '';
+            }
+        }
+        
+        function createCategoryHTML(categoryName, items, prices, users) {
+            const itemsArray = items.split('\n').filter(item => item.trim() !== '');
+            let itemsHTML = '';
+            const hasPrices = prices && Array.isArray(prices) && prices.length > 0;
+            const hasUsers = users && Array.isArray(users) && users.length > 0;
+            
+            const categoryMap = {
+                'Carnes, Aves e Peixes': 'carnes',
+                'Hortifruti': 'hortifruti',
+                'Laticínios e Ovos': 'laticinios',
+                'Mercearia, Enlatados e Grãos': 'mercearia',
+                'Produtos de Limpeza e Higiene': 'limpeza'
+            };
+            
+            itemsArray.forEach((item, index) => {
+                const userColorClass = hasUsers && users[index] ? getUserColorClass(users[index]) : '';
+                const userDot = userColorClass ? `<span class="item-user-dot ${userColorClass}"></span>` : '';
+                
+                if (hasPrices && prices[index] !== undefined) {
+                    itemsHTML += `
+                        <li>
+                            <div class="item-with-user">
+                                ${userDot}
+                                <span>${item}</span>
+                            </div>
+                            <div>
+                                <span class="price">R$ ${parseFloat(prices[index]).toFixed(2)}</span>
+                                <button onclick="removeItemFromList('${categoryMap[categoryName]}', ${index})">×</button>
+                            </div>
+                        </li>
+                    `;
+                } else {
+                    itemsHTML += `
+                        <li>
+                            <div class="item-with-user">
+                                ${userDot}
+                                <span>${item}</span>
+                            </div>
+                            <button onclick="removeItemFromList('${categoryMap[categoryName]}', ${index})">×</button>
+                        </li>
+                    `;
+                }
+            });
+            
+        
+            return `
+                <div class="category">
+                   <div class="category-title">${categoryName}</div>
+                   <ul class="item-list">${itemsHTML}</ul>
+                </div>
+             `;
+
+        }
+        
+        function removeItemFromList(category, itemIndex) {
+            event.stopPropagation();
+            if (!confirm('Tem certeza que deseja remover este item?')) return;
+            
+            const listElement = event.target.closest('.list-details');
+            const listIndex = parseInt(listElement.id.split('-').pop());
+            let savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+            const list = savedLists[listIndex];
+            const currentPlayer = localStorage.getItem('selectedPlayer') || 'Usuário não identificado';
+            
+            if (!list.editHistory) list.editHistory = [];
+            
+            const categoryKey = category;
+            const priceKey = categoryKey + 'Precos';
+            const userKey = categoryKey + 'Users';
+            
+            if (list[categoryKey]) {
+                const items = list[categoryKey].split('\n').filter(item => item.trim() !== '');
+                const removedItem = items[itemIndex];
+                items.splice(itemIndex, 1);
+                list[categoryKey] = items.join('\n');
+                
+                if (list[priceKey] && Array.isArray(list[priceKey])) {
+                    list[priceKey].splice(itemIndex, 1);
+                }
+                
+                if (list[userKey] && Array.isArray(list[userKey])) {
+                    list[userKey].splice(itemIndex, 1);
+                }
+                
+                list.editHistory.push({
+                    editor: currentPlayer,
+                    timestamp: new Date().toISOString(),
+                    action: `Removeu item "${removedItem}" da categoria ${category}`
+                });
+                
+                list.lastEditor = currentPlayer;
+                localStorage.setItem('savedLists', JSON.stringify(savedLists));
+                loadSavedLists();
+                
+                setTimeout(() => {
+                    document.getElementById(`list-details-${listIndex}`).classList.add('active');
+                }, 100);
+            }
+        }
+        
+        function toggleListDetails(index) {
+              const detailsElement = document.getElementById(`list-details-${index}`);
+              if (document.querySelector('.add-item-form')) return;
+    
+             detailsElement.classList.toggle('active');
+    
+             // Adicionar informação do último editor se estiver abrindo os detalhes
+               if (detailsElement.classList.contains('active')) {
+              // Verificar se o elemento de último editor já existe
+              if (!detailsElement.querySelector('.last-editor')) {
+                 const savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+                  const list = savedLists[index];
+            
+            if (list.lastEditor) {
+                const lastEditorDiv = document.createElement('div');
+                lastEditorDiv.classList.add('last-editor');
+                
+                // Determinar a classe do ponto colorido
+                let dotClass = '';
+                switch(list.lastEditor.toLowerCase()) {
+                    case 'leo': dotClass = 'dot-leo'; break;
+                    case 'yumi': dotClass = 'dot-yumi'; break;
+                    case 'kdu-caio': dotClass = 'dot-kdu-caio'; break;
+                }
+                
+                lastEditorDiv.innerHTML = `
+                    <span>Última edição por: <span class="color-dot ${dotClass}"></span> ${list.lastEditor}</span>
+                    <button class="history-button" onclick="showEditHistory(${index})">Histórico</button>
+                `;
+                
+                detailsElement.appendChild(lastEditorDiv);
+            }
+        }
+    }
+}
+        function deleteList(index, event) {
+            event.stopPropagation();
+            if (confirm('Tem certeza que deseja excluir esta lista?')) {
+                let savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+                savedLists.splice(index, 1);
+                localStorage.setItem('savedLists', JSON.stringify(savedLists));
+                loadSavedLists();
+            }
+        }
+        
+        function editList(index, event) {
+    event.stopPropagation();
+    const detailsElement = document.getElementById(`list-details-${index}`);
+    
+    if (!detailsElement.classList.contains('active')) {
+        detailsElement.classList.add('active');
+    }
+    
+    if (document.querySelector('.add-item-form')) return;
+    
+    const formElement = document.createElement('form');
+    formElement.classList.add('add-item-form');
+    formElement.innerHTML = `
+        <div class="form-group">
+            <label for="edit-category">Categoria:</label>
+            <select id="edit-category">
+                <option value="carnes">Carnes, Aves e Peixes</option>
+                <option value="hortifruti">Hortifruti</option>
+                <option value="laticinios">Laticínios e Ovos</option>
+                <option value="mercearia">Mercearia, Enlatados e Grãos</option>
+                <option value="limpeza">Produtos de Limpeza e Higiene</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="edit-item">Item:</label>
+            <input type="text" id="edit-item" placeholder="Digite o item">
+        </div>
+        <div class="form-group">
+            <label for="edit-price">Preço (opcional):</label>
+            <input type="number" id="edit-price" placeholder="0.00" step="0.01">
+        </div>
+        <div class="form-buttons">
+            <button type="button" class="form-button cancel-button" onclick="cancelEdit()">Cancelar</button>
+            <button type="button" class="form-button add-button" onclick="addItemToList(${index})">Adicionar</button>
+        </div>
+        <div style="text-align: center; margin-top: 10px;">
+            <button type="button" class="form-button" 
+                    style="background-color: #3b5bb3; color: white;" 
+                    onclick="showEditHistory(${index})">
+                Ver Histórico de Edições
+            </button>
+        </div>
+    `;
+    
+    detailsElement.appendChild(formElement);
+}
+
+
+        function cancelEdit() {
+            const formElement = document.querySelector('.add-item-form');
+            if (formElement) formElement.remove();
+        }
+        
+        function addItemToList(index) {
+    const category = document.getElementById('edit-category').value;
+    const item = document.getElementById('edit-item').value.trim();
+    const price = document.getElementById('edit-price').value;
+    
+    if (!item) {
+        alert('Por favor, digite um item.');
+        return;
+    }
+    
+    let savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+    const list = savedLists[index];
+    const currentPlayer = localStorage.getItem('selectedPlayer') || 'Usuário não identificado';
+    
+    if (!list.editHistory) list.editHistory = [];
+    
+    // Adicionar o item à lista
+    if (!list[category]) list[category] = '';
+    list[category] += (list[category] ? '\n' : '') + item;
+    
+    // Calcular o número correto de itens
+    const itemCount = list[category].split('\n').filter(i => i.trim() !== '').length;
+    
+    // Track price if provided
+    const priceKey = category + 'Precos';
+    if (!list[priceKey]) list[priceKey] = [];
+    
+    // Garantir que o array de preços tenha o tamanho correto
+    while (list[priceKey].length < itemCount - 1) {
+        list[priceKey].push(0);
+    }
+    
+    // Adicionar o novo preço
+    list[priceKey].push(price ? parseFloat(price) : 0);
+    
+    // Track user who added the item
+    const userKey = category + 'Users';
+    if (!list[userKey]) list[userKey] = [];
+    
+    // Garantir que o array de usuários tenha o tamanho correto
+    while (list[userKey].length < itemCount - 1) {
+        list[userKey].push('');
+    }
+    
+    // Adicionar o usuário atual
+    list[userKey].push(currentPlayer);
+    
+    list.editHistory.push({
+        editor: currentPlayer,
+        timestamp: new Date().toISOString(),
+        action: `Adicionou item "${item}" à categoria ${category}`
+    });
+    
+    list.lastEditor = currentPlayer;
+    
+    // Salvar a lista atualizada
+    localStorage.setItem('savedLists', JSON.stringify(savedLists));
+    
+    // Limpar os campos do formulário
+    document.getElementById('edit-item').value = '';
+    document.getElementById('edit-price').value = '';
+    
+    // Recarregar todas as listas
+    loadSavedLists();
+    
+    // Usar setTimeout para garantir que o DOM foi atualizado antes de tentar abrir o detalhe e o formulário
+    setTimeout(() => {
+        const detailsElement = document.getElementById(`list-details-${index}`);
+        if (detailsElement) {
+            detailsElement.classList.add('active');
+            
+            // Reconstruir o formulário de edição
+            const existingForm = detailsElement.querySelector('.add-item-form');
+            if (existingForm) existingForm.remove();
+            
+            const formElement = document.createElement('form');
+            formElement.classList.add('add-item-form');
+            formElement.innerHTML = `
+                <div class="form-group">
+                    <label for="edit-category">Categoria:</label>
+                    <select id="edit-category">
+                        <option value="carnes">Carnes, Aves e Peixes</option>
+                        <option value="hortifruti">Hortifruti</option>
+                        <option value="laticinios">Laticínios e Ovos</option>
+                        <option value="mercearia">Mercearia, Enlatados e Grãos</option>
+                        <option value="limpeza">Produtos de Limpeza e Higiene</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-item">Item:</label>
+                    <input type="text" id="edit-item" placeholder="Digite o item">
+                </div>
+                <div class="form-group">
+                    <label for="edit-price">Preço (opcional):</label>
+                    <input type="number" id="edit-price" placeholder="0.00" step="0.01">
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="form-button cancel-button" onclick="cancelEdit()">Cancelar</button>
+                    <button type="button" class="form-button add-button" onclick="addItemToList(${index})">Adicionar</button>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <button type="button" class="form-button" 
+                            style="background-color: #3b5bb3; color: white;" 
+                            onclick="showEditHistory(${index})">
+                        Ver Histórico de Edições
+                    </button>
+                </div>
+            `;
+            
+            detailsElement.appendChild(formElement);
+            document.getElementById('edit-item').focus();
+        }
+    }, 100);
+}
+        
+        function exportLists() {
+            const savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+            
+            if (savedLists.length === 0) {
+                alert('Não há listas para exportar.');
+                return;
+            }
+            
+            // Create a formatted export with user information
+            const exportData = savedLists.map(list => {
+                // Create a formatted export object
+                const exportList = {
+                    name: list.name || `Lista ${new Date(list.timestamp).toLocaleDateString()}`,
+                    date: list.timestamp,
+                    totalValue: calculateTotalValue(list),
+                    items: []
+                };
+                
+                // Add all items with their categories, prices, and user information
+                const categories = [
+                    { key: 'carnes', name: 'Carnes, Aves e Peixes' },
+                    { key: 'hortifruti', name: 'Hortifruti' },
+                    { key: 'laticinios', name: 'Laticínios e Ovos' },
+                    { key: 'mercearia', name: 'Mercearia, Enlatados e Grãos' },
+                    { key: 'limpeza', name: 'Produtos de Limpeza e Higiene' }
+                ];
+                
+                categories.forEach(cat => {
+                    if (list[cat.key] && list[cat.key].trim() !== '') {
+                        const items = list[cat.key].split('\n').filter(item => item.trim() !== '');
+                        const prices = list[cat.key + 'Precos'] || [];
+                        const users = list[cat.key + 'Users'] || [];
+                        
+                        items.forEach((item, idx) => {
+                            exportList.items.push({
+                                category: cat.name,
+                                item: item,
+                                price: prices[idx] || 0,
+                                addedBy: users[idx] || 'Desconhecido'
+                            });
+                        });
+                    }
+                });
+                
+                return exportList;
+            });
+            
+            const jsonData = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const downloadLink = document.createElement('a');
+            downloadLink.href = url;
+            downloadLink.download = 'listas_salvas_' + new Date().toISOString().slice(0, 10) + '.json';
+            
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            
+            URL.revokeObjectURL(url);
+            alert('Arquivo JSON exportado com sucesso!');
+        }
+        
+        function calculateTotalValue(list) {
+            let total = 0;
+            
+            // If the list already has a totalPrice property, use that
+            if (list.totalPrice) {
+                return list.totalPrice;
+            }
+            
+            // Otherwise calculate from individual prices
+            const categories = ['carnes', 'hortifruti', 'laticinios', 'mercearia', 'limpeza'];
+            
+            categories.forEach(cat => {
+                const priceKey = cat + 'Precos';
+                if (list[priceKey] && Array.isArray(list[priceKey])) {
+                    list[priceKey].forEach(price => {
+                        if (price) total += parseFloat(price);
+                    });
+                }
+            });
+            
+            return total;
+        }
+        
+        function goBack() {
+            window.location.href = "Listinhas.html";
+        }
+        
+        function goHome() {
+            window.location.href = "inicio_app.html";
+        }
+        
+        window.addEventListener('DOMContentLoaded', loadSavedLists);
+        function updateUserTracking() {
+    // Obter todas as listas salvas
+    let savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+    const currentPlayer = localStorage.getItem('selectedPlayer') || 'Usuário não identificado';
+    let updated = false;
+    
+    // Percorrer cada lista
+    savedLists.forEach(list => {
+        // Criar arrays de usuários para categorias que não têm
+        const categories = ['carnes', 'hortifruti', 'laticinios', 'mercearia', 'limpeza'];
+        
+        categories.forEach(category => {
+            // Se a categoria existe na lista, mas não tem array de usuários
+            if (list[category] && list[category].trim() !== '') {
+                const userKey = category + 'Users';
+                
+                // Se o array de usuários não existe, crie-o
+                if (!list[userKey]) {
+                    list[userKey] = [];
+                    updated = true;
+                }
+                
+                // Contar quantos itens existem na categoria
+                const itemCount = list[category].split('\n').filter(item => item.trim() !== '').length;
+                
+                // Ajustar o tamanho do array de usuários para corresponder ao número de itens
+                while (list[userKey].length < itemCount) {
+                    // Se soubermos quem criou a lista originalmente, atribuímos a eles
+                    // Caso contrário, deixamos como desconhecido
+                    list[userKey].push(list.username || '');
+                    updated = true;
+                }
+            }
+        });
+        
+        // Adicionar campos de histórico de edição se não existirem
+        if (!list.editHistory) {
+            list.editHistory = [{
+                editor: list.username || 'Desconhecido',
+                timestamp: list.timestamp || new Date().toISOString(),
+                action: 'Lista criada'
+            }];
+            updated = true;
+        }
+        
+        // Adicionar o último editor se não existir
+        if (!list.lastEditor && list.username) {
+            list.lastEditor = list.username;
+            updated = true;
+        }
+    });
+    
+    // Se alguma atualização foi feita, salve as listas de volta ao localStorage
+    if (updated) {
+        localStorage.setItem('savedLists', JSON.stringify(savedLists));
+        console.log('Informações de usuário das listas atualizadas');
+    }
+}
+
+// Adicione essa função para exibir o histórico de edições de uma lista
+function showEditHistory(index) {
+    const savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+    const list = savedLists[index];
+    
+    if (!list.editHistory || list.editHistory.length === 0) {
+        alert('Não há histórico de edição para esta lista.');
+        return;
+    }
+    
+    // Criar uma string formatada com o histórico de edições
+    let historyText = 'Histórico de Edições:\n\n';
+    
+    list.editHistory.forEach((edit, i) => {
+        const date = new Date(edit.timestamp).toLocaleString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        historyText += `${i+1}. ${edit.action}\n`;
+        historyText += `   Por: ${edit.editor}\n`;
+        historyText += `   Em: ${date}\n\n`;
+    });
+    
+    alert(historyText);
+}
+
+    
+    </script>
+</body>
+</html>

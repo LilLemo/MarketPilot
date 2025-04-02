@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listinhas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a2a5f;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .title {
+            background-color: #3b5bb3;
+            color: white;
+            padding: 12px 15px;
+            font-size: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .buttons-container {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+        }
+        
+        .action-button {
+            background-color: #3478c0;
+            color: white;
+            padding: 30px 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.2s;
+            min-height: 150px;
+        }
+        
+        .action-button:hover {
+            background-color: #285b8e;
+            transform: translateY(-3px);
+        }
+        
+        .action-button:active {
+            transform: translateY(1px);
+        }
+        
+        .button-text {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        
+        .icon {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .plus-icon {
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 20px;
+        }
+        
+        /* Ícones de arquivo para "Listas salvas" */
+        .file-icons {
+            display: flex;
+            margin-top: 5px;
+        }
+        
+        .file-icon {
+            font-size: 20px;
+            margin: 0 3px;
+        }
+        
+        /* Layout responsivo */
+        @media (max-width: 480px) {
+            .buttons-container {
+                flex-direction: column;
+            }
+            
+            .action-button {
+                min-height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Listinhas</div>
+        <div class="buttons-container">
+            <div class="action-button" onclick="window.location.href='nova_lista.html'">
+                <div class="button-text">Nova lista</div>
+                <div class="plus-icon">+📋</div>
+            </div>
+            <div class="action-button" onclick="window.location.href='listas_salvas.html'">
+                <div class="button-text">Listas salvas</div>
+                <div class="file-icons">
+                    <span class="file-icon">📋</span>
+                    <span class="file-icon">📋</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Se desejar recuperar informação do jogador selecionado
+        window.onload = function() {
+            const selectedPlayer = localStorage.getItem('selectedPlayer');
+            // Você pode usar a informação do jogador aqui se necessário
+        };
+    </script>
+</body>
+</html>

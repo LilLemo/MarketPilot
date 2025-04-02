@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escolha o Corre</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #1a2a5f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #2d4a89;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+        }
+        .titulo {
+            background-color: #3b5bb3;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .botoes {
+            display: flex;
+            gap: 20px;
+        }
+        .botao {
+            background-color: #3478c0;
+            padding: 20px;
+            border-radius: 10px;
+            flex: 1;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .botao:hover {
+            background-color: #285b8e;
+        }
+        .botao img {
+            display: block;
+            margin: 0 auto 10px;
+        }
+    </style>
+</head>
+<body class="blue-bg">
+    <div class="container">
+        <div class="title">Escolha o Corre</div>
+        <div class="botoes">
+            <div class="botao" onclick="window.location.href='listinhas.html'">📝 Listinhas</div>
+            <div class="botao" onclick="window.location.href='Momento_Mercado.html'">🛒 Modo Compra</div>
+        </div>
+    </div>
+    <script>
+        window.onload = function () {
+            const selectedPlayer = localStorage.getItem('selectedPlayer');
+            if (selectedPlayer) {
+                document.querySelector('.title').innerText = `Escolha o Corre, ${selectedPlayer.toUpperCase()}!`;
+            }
+        };
+    </script>
+</body>
+</html>

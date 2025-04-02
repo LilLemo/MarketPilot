@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Momento Mercado</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        :root {
+            --primary: #2c6e49;
+            --secondary: #4c956c;
+            --accent: #fefee3;
+            --wood: #dda15e;
+            --dark-wood: #bc6c25;
+            --light-bg: #fefee3;
+            --dark-text: #283618;
+        }
+        
+        body { 
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+        }
+        
+        .container { 
+            width: 92%; 
+            max-width: 600px; 
+            display: flex; 
+            flex-direction: column;
+            padding: 1rem;
+        }
+        
+        .title { 
+            background-color: var(--wood); 
+            color: var(--light-bg); 
+            padding: 1rem; 
+            border-radius: 10px; 
+            margin-bottom: 1.5rem; 
+            text-align: center; 
+            font-weight: bold; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            border: 2px solid var(--dark-wood); 
+            font-size: 1.5rem; 
+            text-transform: uppercase; 
+        }
+        
+        .main-content { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 20px; 
+        }
+        
+        .start-button { 
+            background-color: var(--secondary); 
+            color: var(--light-bg); 
+            padding: 2rem 1rem; 
+            border-radius: 15px; 
+            cursor: pointer; 
+            border: 2px solid var(--primary); 
+            font-weight: bold; 
+            font-size: 1.25rem; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            width: 200px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        
+        .start-button:hover {
+            background-color: var(--primary);
+            transform: scale(1.03);
+        }
+        
+        .select-list { 
+            background-color: var(--wood); 
+            color: var(--light-bg); 
+            padding: 0.75rem 1.25rem; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            border: none; 
+            font-weight: bold; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .select-list:hover {
+            background-color: var(--dark-wood);
+        }
+        
+        .home-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--wood);
+            color: var(--light-bg);
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .home-button:hover {
+            background-color: var(--dark-wood);
+        }
+        
+        .shopping-mode-container {
+            display: none;
+            background-color: var(--light-bg);
+            border-radius: 15px;
+            padding: 1.25rem;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            color: var(--dark-text);
+        }
+        
+        .shopping-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 0.75rem;
+        }
+        
+        .shopping-title {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        
+        .timer {
+            color: var(--light-bg);
+            font-weight: bold;
+            background-color: var(--primary);
+            padding: 0.4rem 0.75rem;
+            border-radius: 5px;
+        }
+        
+        .category-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .category-title {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid var(--wood);
+            padding-bottom: 0.4rem;
+        }
+        
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem;
+            border-radius: 5px;
+            margin-bottom: 0.4rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .shop-item:hover {
+            background-color: rgba(76, 149, 108, 0.1);
+        }
+        
+        .item-with-user {
+            display: flex;
+            align-items: center;
+        }
+        
+        .item-user-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+        
+        .dot-leo { background-color: #FF0000; }
+        .dot-yumi { background-color: #FFCC00; }
+        .dot-kdu-caio { background-color: #9900CC; }
+        
+        .item-completed {
+            text-decoration: line-through;
+            color: #666;
+            background-color: rgba(44, 110, 73, 0.15);
+        }
+        
+        .price-input {
+            display: none;
+            width: 100%;
+            max-width: 100px;
+            padding: 0.4rem;
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            text-align: right;
+        }
+        
+        .save-price {
+            display: none;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.4rem;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        
+        .finish-button {
+            background-color: var(--wood);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1.25rem;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .finish-button:hover {
+            background-color: var(--dark-wood);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: var(--light-bg);
+            margin: auto;
+            padding: 1.5rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.25rem;
+            border-bottom: 2px solid var(--wood);
+            padding-bottom: 0.75rem;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            background-color: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .result-label {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .result-value {
+            font-weight: bold;
+        }
+        
+        .highlight {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        .done-button {
+            background-color: var(--wood);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1.25rem;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        .done-button:hover {
+            background-color: var(--dark-wood);
+        }
+        
+        .no-list-message {
+            color: var(--light-bg);
+            text-align: center;
+            background-color: rgba(0,0,0,0.3);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1.25rem;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 96%;
+                padding: 0.5rem;
+            }
+            
+            .title {
+                font-size: 1.2rem;
+                padding: 0.75rem;
+            }
+            
+            .start-button {
+                width: 160px;
+                height: 160px;
+                font-size: 1rem;
+            }
+            
+            .shopping-mode-container {
+                padding: 0.75rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 1rem;
+            }
+        }
+        .add-item-button {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        z-index: 2;
+        display: none; /* Inicialmente oculto */
+    }
+    
+    .add-item-button:hover {
+        background-color: var(--secondary);
+        transform: scale(1.1);
+    }
+    
+    /* Estilos para o modal de adicionar item */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: var(--primary);
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--secondary);
+        border-radius: 5px;
+        font-size: 1rem;
+    }
+    
+    .modal-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1.25rem;
+    }
+    
+    .modal-button {
+        padding: 0.75rem 1.25rem;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .cancel-button {
+        background-color: #ddd;
+        color: #333;
+    }
+    
+    .confirm-button {
+        background-color: var(--wood);
+        color: white;
+    }
+    
+    .confirm-button:hover {
+        background-color: var(--dark-wood);
+    }
+    
+    .new-item-badge {
+        background-color: var(--primary);
+        color: white;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 10px;
+        margin-left: 5px;
+        font-weight: bold;
+    }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="title">Momento Mercado</h1>
+        
+        <div class="main-content" id="startScreen">
+            <button class="start-button" id="startButton">
+                Iniciar<br>Compras
+            </button>
+            <button class="select-list" id="selectListButton">Selecionar Lista</button>
+        </div>
+        
+        <div class="shopping-mode-container" id="shoppingMode">
+            <div class="shopping-header">
+                <div class="shopping-title" id="listName">Lista de Compras</div>
+                <div class="timer" id="timer">00:00:00</div>
+            </div>
+            
+            <div id="categoriesContainer"></div>
+            
+            <div class="finish-button" id="finishButton">FINALIZAR COMPRAS</div>
+        </div>
+    </div>
+    
+    <button class="home-button" onclick="goHome()">⌂</button>
+    <button class="add-item-button" id="addItemButton">+</button>
+    <div id="addItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Adicionar Novo Item</div>
+            
+            <div class="form-group">
+                <label for="categorySelect">Categoria:</label>
+                <select id="categorySelect" class="form-control">
+                    <option value="carnes">Carnes, Aves e Peixes</option>
+                    <option value="hortifruti">Hortifruti</option>
+                    <option value="laticinios">Laticínios e Ovos</option>
+                    <option value="mercearia">Mercearia, Enlatados e Grãos</option>
+                    <option value="limpeza">Produtos de Limpeza e Higiene</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="itemNameInput">Nome do Item:</label>
+                <input type="text" id="itemNameInput" class="form-control" placeholder="Digite o nome do item">
+            </div>
+            
+            <div class="form-group">
+                <label for="itemPriceInput">Preço (R$):</label>
+                <input type="number" id="itemPriceInput" class="form-control" placeholder="0.00" step="0.01">
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="modal-button cancel-button" id="cancelAddItem">Cancelar</button>
+                <button class="modal-button confirm-button" id="confirmAddItem">Adicionar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Resumo da Compra</div>
+            
+            <div class="result-item">
+                <span class="result-label">Valor Total:</span>
+                <span class="result-value highlight" id="totalValue">R$ 0,00</span>
+            </div>
+            
+            <div class="result-item">
+                <span class="result-label">Tempo de Compra:</span>
+                <span class="result-value" id="totalTime">00:00:00</span>
+            </div>
+            
+            <div class="result-item">
+                <span class="result-label">Produto Mais Caro:</span>
+                <span class="result-value" id="mostExpensiveItem">-</span>
+            </div>
+            
+            <div class="result-item">
+                <span class="result-label">Produto Mais Barato:</span>
+                <span class="result-value" id="cheapestItem">-</span>
+            </div>
+            
+            <button class="done-button" id="doneButton">CONCLUÍDO</button>
+        </div>
+    </div>
+    
+    <script>
+        let selectedListIndex = -1;
+        let startTime;
+        let timerInterval;
+        let currentList;
+        
+        const startScreen = document.getElementById('startScreen');
+        const shoppingMode = document.getElementById('shoppingMode');
+        const startButton = document.getElementById('startButton');
+        const selectListButton = document.getElementById('selectListButton');
+        const listNameElement = document.getElementById('listName');
+        const timerElement = document.getElementById('timer');
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        const finishButton = document.getElementById('finishButton');
+        const resultsModal = document.getElementById('resultsModal');
+        const totalValueElement = document.getElementById('totalValue');
+        const totalTimeElement = document.getElementById('totalTime');
+        const mostExpensiveItemElement = document.getElementById('mostExpensiveItem');
+        const cheapestItemElement = document.getElementById('cheapestItem');
+        const doneButton = document.getElementById('doneButton');
+        
+        window.addEventListener('DOMContentLoaded', checkForSelectedList);
+        selectListButton.addEventListener('click', selectList);
+        startButton.addEventListener('click', startShoppingMode);
+        finishButton.addEventListener('click', finishShoppingMode);
+        doneButton.addEventListener('click', closeResultsAndSave);
+        
+        function checkForSelectedList() {
+            const savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+            
+            if (savedLists.length === 0) {
+                selectListButton.disabled = true;
+                selectListButton.style.opacity = '0.5';
+                selectListButton.style.cursor = 'not-allowed';
+                
+                const noListMessage = document.createElement('div');
+                noListMessage.className = 'no-list-message';
+                noListMessage.textContent = 'Nenhuma lista disponível. Crie uma lista primeiro.';
+                startScreen.appendChild(noListMessage);
+            } else {
+                selectedListIndex = parseInt(localStorage.getItem('selectedListIndex'));
+                if (!isNaN(selectedListIndex) && selectedListIndex >= 0 && selectedListIndex < savedLists.length) {
+                    const list = savedLists[selectedListIndex];
+                    selectListButton.textContent = `Lista: ${list.name || 'Lista de Compras'}`;
+                }
+            }
+        }
+        
+        function selectList() {
+            const savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+            
+            if (savedLists.length === 0) {
+                alert('Não há listas disponíveis para selecionar.');
+                return;
+            }
+            
+            let listOptions = 'Selecione uma lista:\n\n';
+            savedLists.forEach((list, index) => {
+                const listDate = list.timestamp ? new Date(list.timestamp).toLocaleDateString() : 'Data desconhecida';
+                listOptions += `${index + 1}. ${list.name || `Lista ${listDate}`}\n`;
+            });
+            
+            const selectedOption = prompt(listOptions);
+            if (selectedOption === null) return;
+            
+            const selectedIndex = parseInt(selectedOption) - 1;
+            if (isNaN(selectedIndex) || selectedIndex < 0 || selectedIndex >= savedLists.length) {
+                alert('Opção inválida. Por favor, tente novamente.');
+                return;
+            }
+            
+            selectedListIndex = selectedIndex;
+            localStorage.setItem('selectedListIndex', selectedListIndex);
+            
+            const selectedList = savedLists[selectedListIndex];
+            selectListButton.textContent = `Lista: ${selectedList.name || 'Lista de Compras'}`;
+        }
+        
+        function startShoppingMode() {
+            if (selectedListIndex === -1) {
+                const savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+                
+                if (savedLists.length === 0) {
+                    alert('Não há listas disponíveis. Crie uma lista primeiro.');
+                    return;
+                }
+                
+                selectedListIndex = 0;
+                localStorage.setItem('selectedListIndex', selectedListIndex);
+            }
+            
+            const savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+            currentList = savedLists[selectedListIndex];
+            
+            startTime = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            listNameElement.textContent = currentList.name || 'Lista de Compras';
+            loadCategories();
+            
+            startScreen.style.display = 'none';
+            shoppingMode.style.display = 'block';
+        }
+        
+        function loadCategories() {
+            categoriesContainer.innerHTML = '';
+            
+            const categories = [
+                { key: 'carnes', name: 'Carnes, Aves e Peixes' },
+                { key: 'hortifruti', name: 'Hortifruti' },
+                { key: 'laticinios', name: 'Laticínios e Ovos' },
+                { key: 'mercearia', name: 'Mercearia, Enlatados e Grãos' },
+                { key: 'limpeza', name: 'Produtos de Limpeza e Higiene' }
+            ];
+            
+            categories.forEach(category => {
+                if (currentList[category.key] && currentList[category.key].trim() !== '') {
+                    const categoryElement = document.createElement('div');
+                    categoryElement.className = 'category-container';
+                    
+                    const categoryTitle = document.createElement('div');
+                    categoryTitle.className = 'category-title';
+                    categoryTitle.textContent = category.name;
+                    categoryElement.appendChild(categoryTitle);
+                    
+                    const items = currentList[category.key].split('\n').filter(item => item.trim() !== '');
+                    const users = currentList[category.key + 'Users'] || [];
+                    const prices = currentList[category.key + 'Precos'] || [];
+                    
+                    items.forEach((item, index) => {
+                        const userColorClass = users[index] ? getUserColorClass(users[index]) : '';
+                        const userDot = userColorClass ? `<span class="item-user-dot ${userColorClass}"></span>` : '';
+                        
+                        const itemElement = document.createElement('div');
+                        itemElement.className = 'shop-item';
+                        itemElement.dataset.category = category.key;
+                        itemElement.dataset.index = index;
+                        
+                        if (prices[index] > 0) {
+                            itemElement.classList.add('item-completed');
+                        }
+                        
+                        itemElement.innerHTML = `
+                            <div class="item-with-user">
+                                ${userDot}
+                                <span class="item-name">${item}</span>
+                            </div>
+                            <div class="item-actions">
+                                <span class="item-price">${prices[index] > 0 ? 'R$ ' + parseFloat(prices[index]).toFixed(2) : ''}</span>
+                                <input type="number" class="price-input" placeholder="0.00" step="0.01" style="display: none;">
+                                <button class="save-price" style="display: none;">✓</button>
+                            </div>
+                        `;
+                        
+                        itemElement.addEventListener('click', function(e) {
+                            if (e.target.classList.contains('price-input') || e.target.classList.contains('save-price')) {
+                                return;
+                            }
+                            
+                            const priceInput = this.querySelector('.price-input');
+                            const saveButton = this.querySelector('.save-price');
+                            const itemPrice = this.querySelector('.item-price');
+                            
+                            if (this.classList.contains('item-completed') && 
+                                !confirm('Este item já foi adicionado. Deseja modificar o preço?')) {
+                                return;
+                            }
+                            
+                            priceInput.style.display = 'inline-block';
+                            saveButton.style.display = 'inline-block';
+                            itemPrice.style.display = 'none';
+                            
+                            if (itemPrice.textContent) {
+                                priceInput.value = parseFloat(itemPrice.textContent.replace('R$ ', '')).toFixed(2);
+                            }
+                            
+                            priceInput.focus();
+                            
+                            saveButton.onclick = function() {
+                                const price = parseFloat(priceInput.value);
+                                if (isNaN(price) || price <= 0) {
+                                    alert('Por favor, digite um preço válido.');
+                                    return;
+                                }
+                                
+                                itemPrice.textContent = 'R$ ' + price.toFixed(2);
+                                itemPrice.style.display = 'inline-block';
+                                priceInput.style.display = 'none';
+                                saveButton.style.display = 'none';
+                                
+                                itemElement.classList.add('item-completed');
+                                
+                                const categoryKey = itemElement.dataset.category;
+                                const itemIndex = parseInt(itemElement.dataset.index);
+                                const priceKey = categoryKey + 'Precos';
+                                
+                                if (!currentList[priceKey]) {
+                                    currentList[priceKey] = [];
+                                }
+                                
+                                while (currentList[priceKey].length <= itemIndex) {
+                                    currentList[priceKey].push(0);
+                                }
+                                
+                                currentList[priceKey][itemIndex] = price;
+                            };
+                        });
+                        
+                        categoryElement.appendChild(itemElement);
+                    });
+                    
+                    categoriesContainer.appendChild(categoryElement);
+                }
+            });
+        }
+        
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startTime;
+            
+            const hours = Math.floor(diff / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            
+            timerElement.textContent = 
+                (hours < 10 ? '0' : '') + hours + ':' +
+                (minutes < 10 ? '0' : '') + minutes + ':' +
+                (seconds < 10 ? '0' : '') + seconds;
+        }
+        
+        function getUserColorClass(user) {
+            if (!user) return '';
+            switch (user.toLowerCase()) {
+                case 'leo': return 'dot-leo';
+                case 'yumi': return 'dot-yumi';
+                case 'kdu-caio': return 'dot-kdu-caio';
+                default: return '';
+            }
+        }
+        
+        function finishShoppingMode() {
+            clearInterval(timerInterval);
+            const endTime = new Date();
+            const shoppingDuration = endTime - startTime;
+            
+            let totalValue = 0;
+            let mostExpensiveItem = { name: '-', price: 0 };
+            let cheapestItem = { name: '-', price: Number.MAX_VALUE };
+            
+            const categories = ['carnes', 'hortifruti', 'laticinios', 'mercearia', 'limpeza'];
+            
+            categories.forEach(cat => {
+                const priceKey = cat + 'Precos';
+                if (currentList[cat] && currentList[priceKey]) {
+                    const items = currentList[cat].split('\n').filter(item => item.trim() !== '');
+                    const prices = currentList[priceKey];
+                    
+                    items.forEach((item, idx) => {
+                        const price = prices[idx] || 0;
+                        if (price > 0) {
+                            totalValue += price;
+                            
+                            if (price > mostExpensiveItem.price) {
+                                mostExpensiveItem = { name: item, price: price };
+                            }
+                            
+                            if (price < cheapestItem.price) {
+                                cheapestItem = { name: item, price: price };
+                            }
+                        }
+                    });
+                }
+            });
+            
+            const hours = Math.floor(shoppingDuration / 3600000);
+            const minutes = Math.floor((shoppingDuration % 3600000) / 60000);
+            const seconds = Math.floor((shoppingDuration % 60000) / 1000);
+            const formattedTime = 
+                (hours < 10 ? '0' : '') + hours + ':' +
+                (minutes < 10 ? '0' : '') + minutes + ':' +
+                (seconds < 10 ? '0' : '') + seconds;
+            
+            totalValueElement.textContent = 'R$ ' + totalValue.toFixed(2);
+            totalTimeElement.textContent = formattedTime;
+            
+            if (mostExpensiveItem.name !== '-') {
+                mostExpensiveItemElement.textContent = `${mostExpensiveItem.name} - R$ ${mostExpensiveItem.price.toFixed(2)}`;
+            }
+            
+            if (cheapestItem.name !== '-' && cheapestItem.price < Number.MAX_VALUE) {
+                cheapestItemElement.textContent = `${cheapestItem.name} - R$ ${cheapestItem.price.toFixed(2)}`;
+            }
+            
+            currentList.totalPrice = totalValue;
+            currentList.shoppingTime = formattedTime;
+            currentList.startTime = startTime.toISOString();
+            currentList.endTime = endTime.toISOString();
+            currentList.mostExpensiveItem = mostExpensiveItem;
+            currentList.cheapestItem = cheapestItem;
+            
+            resultsModal.style.display = 'flex';
+        }
+        
+        function closeResultsAndSave() {
+            let savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+            savedLists[selectedListIndex] = currentList;
+            localStorage.setItem('savedLists', JSON.stringify(savedLists));
+            
+            resultsModal.style.display = 'none';
+            shoppingMode.style.display = 'none';
+            startScreen.style.display = 'flex';
+            
+            goHome();
+        }
+        
+        function goHome() {
+            window.location.href = "inicio_app.html";
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+        // Obter referências para elementos novos
+        const addItemButton = document.getElementById('addItemButton');
+        const addItemModal = document.getElementById('addItemModal');
+        const cancelAddItem = document.getElementById('cancelAddItem');
+        const confirmAddItem = document.getElementById('confirmAddItem');
+        const categorySelect = document.getElementById('categorySelect');
+        const itemNameInput = document.getElementById('itemNameInput');
+        const itemPriceInput = document.getElementById('itemPriceInput');
+
+        // Adicionar eventos para os novos elementos
+        addItemButton.addEventListener('click', openAddItemModal);
+        cancelAddItem.addEventListener('click', closeAddItemModal);
+        confirmAddItem.addEventListener('click', addNewItem);
+
+        // Modificar a função startShoppingMode para mostrar o botão de adicionar
+        const originalStartShoppingMode = window.startShoppingMode;
+        window.startShoppingMode = function() {
+            originalStartShoppingMode();
+            addItemButton.style.display = 'flex';
+        };
+
+        // Funções para o modal de adicionar item
+        function openAddItemModal() {
+            itemNameInput.value = '';
+            itemPriceInput.value = '';
+            addItemModal.style.display = 'flex';
+        }
+
+        function closeAddItemModal() {
+            addItemModal.style.display = 'none';
+        }
+
+        function addNewItem() {
+            const categoryKey = categorySelect.value;
+            const itemName = itemNameInput.value.trim();
+            const itemPrice = parseFloat(itemPriceInput.value);
+
+            if (!itemName) {
+                alert('Por favor, digite o nome do item.');
+                return;
+            }
+
+            if (isNaN(itemPrice) || itemPrice <= 0) {
+                alert('Por favor, digite um preço válido.');
+                return;
+            }
+
+            // Adicionar o item à lista atual
+            addItemToCurrentList(categoryKey, itemName, itemPrice);
+
+            // Atualizar a exibição
+            loadCategories();
+
+            // Fechar o modal
+            closeAddItemModal();
+        }
+
+        function addItemToCurrentList(categoryKey, itemName, itemPrice) {
+            // Verificar se a categoria já existe na lista atual
+            if (!currentList[categoryKey]) {
+                currentList[categoryKey] = '';
+            }
+
+            // Adicionar o item ao final da categoria
+            if (currentList[categoryKey] && currentList[categoryKey].trim() !== '') {
+                currentList[categoryKey] += '\n';
+            }
+            currentList[categoryKey] += itemName;
+
+            // Adicionar preço
+            const priceKey = categoryKey + 'Precos';
+            if (!currentList[priceKey]) {
+                currentList[priceKey] = [];
+            }
+            
+            // Adicionar o preço na mesma posição do item
+            const itemIndex = currentList[categoryKey].split('\n').length - 1;
+            while (currentList[priceKey].length <= itemIndex) {
+                currentList[priceKey].push(0);
+            }
+            currentList[priceKey][itemIndex] = itemPrice;
+
+            // Adicionar informação que é um novo item
+            if (!currentList.addedItems) {
+                currentList.addedItems = [];
+            }
+            currentList.addedItems.push({
+                category: categoryKey,
+                index: itemIndex,
+                name: itemName,
+                price: itemPrice
+            });
+        }
+
+        // Modificar a função loadCategories para identificar novos itens
+        const originalLoadCategories = window.loadCategories;
+        window.loadCategories = function() {
+            originalLoadCategories();
+
+            // Adicionar badge "NOVO" aos itens adicionados
+            if (currentList.addedItems && currentList.addedItems.length > 0) {
+                currentList.addedItems.forEach(addedItem => {
+                    const categoryContainers = document.querySelectorAll('.category-container');
+                    categoryContainers.forEach(container => {
+                        const categoryTitle = container.querySelector('.category-title').textContent;
+                        const matchesCategory = getCategoryKeyFromTitle(categoryTitle) === addedItem.category;
+                        
+                        if (matchesCategory) {
+                            const items = container.querySelectorAll('.shop-item');
+                            if (items.length > addedItem.index) {
+                                const itemElement = items[addedItem.index];
+                                const itemName = itemElement.querySelector('.item-name');
+                                
+                                if (!itemName.querySelector('.new-item-badge')) {
+                                    const badge = document.createElement('span');
+                                    badge.className = 'new-item-badge';
+                                    badge.textContent = 'NOVO';
+                                    itemName.appendChild(badge);
+                                }
+                            }
+                        }
+                    });
+                });
+            }
+        };
+
+        function getCategoryKeyFromTitle(title) {
+            switch (title) {
+                case 'Carnes, Aves e Peixes': return 'carnes';
+                case 'Hortifruti': return 'hortifruti';
+                case 'Laticínios e Ovos': return 'laticinios';
+                case 'Mercearia, Enlatados e Grãos': return 'mercearia';
+                case 'Produtos de Limpeza e Higiene': return 'limpeza';
+                default: return '';
+            }
+        }
+
+        // Modificar o closeResultsAndSave para também salvar os itens adicionados
+        const originalCloseResultsAndSave = window.closeResultsAndSave;
+        window.closeResultsAndSave = function() {
+            // Garantir que os itens adicionados sejam salvos corretamente
+            originalCloseResultsAndSave();
+            
+            // Esconder o botão de adicionar
+            addItemButton.style.display = 'none';
+        };
+    });
+    </script>
+</body>
+</html>

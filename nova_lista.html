@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Lista</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a2a5f;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .title {
+            background-color: #3b5bb3;
+            color: white;
+            padding: 12px 15px;
+            font-size: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: 2px solid #5f7ed7;
+        }
+        
+        .content-box {
+            background-color: #4375b6;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nicho-button {
+            background-color: #7abbdf;
+            color: black;
+            padding: 12px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 14px;
+            border: none;
+            text-align: left;
+        }
+        
+        .nicho-button:hover {
+            background-color: #8ecfef;
+        }
+        
+        .arrow {
+            font-size: 18px;
+            transition: transform 0.3s;
+        }
+        
+        .nicho-content {
+            display: none;
+            background-color: #a3d6f5;
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .nicho-content.active {
+            display: block;
+        }
+        
+        .nicho-content textarea {
+            width: 100%;
+            min-height: 100px;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #d9efff;
+            resize: vertical;
+            font-size: 14px;
+        }
+        
+        .save-button {
+            background-color: #2a7e2e;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            align-self: flex-end;
+            font-size: 18px;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .save-button:hover {
+            background-color: #3a9c40;
+            transform: translateY(-2px);
+        }
+        
+        .save-button:active {
+            transform: translateY(1px);
+        }
+        
+        .check-icon {
+            font-size: 20px;
+            display: none;
+        }
+        
+        .save-button.saved .check-icon {
+            display: inline;
+        }
+        
+        /* Para rotacionar a seta quando o nicho está aberto */
+        .nicho-button.active .arrow {
+            transform: rotate(90deg);
+        }
+
+        /* Estilo para quando a lista tem itens */
+        .has-items {
+            position: relative;
+        }
+        
+        .has-items::after {
+            content: "•";
+            position: absolute;
+            right: 30px;
+            color: #1a2a5f;
+            font-size: 20px;
+        }
+        
+        /* Estilos para os botões de navegação */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .nav-button {
+            background-color: #3b5bb3;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: bold;
+        }
+        
+        .nav-button:hover {
+            background-color: #4d6bc3;
+            transform: translateY(-2px);
+        }
+        
+        .nav-button:active {
+            transform: translateY(1px);
+        }
+        
+        .home-icon, .back-icon {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navigation-buttons">
+            <button class="nav-button" onclick="goBack()">
+                <span class="back-icon">←</span> Voltar
+            </button>
+            <button class="nav-button" onclick="goHome()">
+                <span class="home-icon">⌂</span> Home
+            </button>
+        </div>
+        
+        <div class="title">Nova Lista</div>
+        <div class="content-box">
+            <button class="nicho-button" onclick="toggleNicho(this, 'carnes')">
+                Carnes, Aves e Peixes
+                <span class="arrow">›</span>
+            </button>
+            <div id="carnes" class="nicho-content">
+                <textarea placeholder="Digite os itens, um por linha..."></textarea>
+            </div>
+            
+            <button class="nicho-button" onclick="toggleNicho(this, 'hortifruti')">
+                Hortifruti
+                <span class="arrow">›</span>
+            </button>
+            <div id="hortifruti" class="nicho-content">
+                <textarea placeholder="Digite os itens, um por linha..."></textarea>
+            </div>
+            
+            <button class="nicho-button" onclick="toggleNicho(this, 'laticinios')">
+                Laticínios e Ovos
+                <span class="arrow">›</span>
+            </button>
+            <div id="laticinios" class="nicho-content">
+                <textarea placeholder="Digite os itens, um por linha..."></textarea>
+            </div>
+            
+            <button class="nicho-button" onclick="toggleNicho(this, 'mercearia')">
+                Mercearia, Enlatados e Grãos
+                <span class="arrow">›</span>
+            </button>
+            <div id="mercearia" class="nicho-content">
+                <textarea placeholder="Digite os itens, um por linha..."></textarea>
+            </div>
+            
+            <button class="nicho-button" onclick="toggleNicho(this, 'limpeza')">
+                Produtos de Limpeza e Higiene
+                <span class="arrow">›</span>
+            </button>
+            <div id="limpeza" class="nicho-content">
+                <textarea placeholder="Digite os itens, um por linha..."></textarea>
+            </div>
+        </div>
+        
+        <button class="save-button" onclick="saveList()">
+            SALVAR <span class="check-icon">✓</span>
+        </button>
+    </div>
+    
+    <script>
+        // Função para abrir/fechar os nichos
+        function toggleNicho(button, id) {
+            const content = document.getElementById(id);
+            content.classList.toggle('active');
+            button.classList.toggle('active');
+        }
+    
+        // Função para salvar a lista
+        function saveList() {
+            const saveButton = document.querySelector('.save-button');
+            const selectedPlayer = localStorage.getItem('selectedPlayer') || "Usuário não identificado";
+    
+            // Coletar dados de todos os nichos
+            const listData = {
+                carnes: document.querySelector('#carnes textarea').value,
+                hortifruti: document.querySelector('#hortifruti textarea').value,
+                laticinios: document.querySelector('#laticinios textarea').value,
+                mercearia: document.querySelector('#mercearia textarea').value,
+                limpeza: document.querySelector('#limpeza textarea').value,
+                timestamp: new Date().toISOString(),
+                name: "Lista " + new Date().toLocaleDateString(),
+                username: selectedPlayer // Adicionando o nome do jogador aos dados salvos
+            };
+    
+            // Verificar quais nichos têm itens e marcar visualmente
+            const nichoButtons = document.querySelectorAll('.nicho-button');
+            nichoButtons.forEach(button => {
+                const nichoId = button.getAttribute('onclick').split("'")[1];
+                if (listData[nichoId].trim() !== '') {
+                    button.classList.add('has-items');
+                } else {
+                    button.classList.remove('has-items');
+                }
+            });
+    
+            // Salvar no localStorage (poderia ser em um servidor posteriormente)
+            let savedLists = JSON.parse(localStorage.getItem('savedLists') || '[]');
+            savedLists.push(listData);
+            localStorage.setItem('savedLists', JSON.stringify(savedLists));
+    
+            // Feedback visual
+            saveButton.classList.add('saved');
+            setTimeout(() => {
+                saveButton.classList.remove('saved');
+            }, 2000);
+    
+            console.log("Lista salva:", listData);
+        }
+    
+        // Evento para detectar quando o usuário adiciona conteúdo nos textareas
+        document.querySelectorAll('textarea').forEach(textarea => {
+            textarea.addEventListener('input', function() {
+                const nichoId = this.parentElement.id;
+                const button = document.querySelector(`[onclick*="${nichoId}"]`);
+    
+                if (this.value.trim() !== '') {
+                    button.classList.add('has-items');
+                } else {
+                    button.classList.remove('has-items');
+                }
+            });
+        });
+    
+        // Função para voltar para a página Listinhas
+        function goBack() {
+            window.location.href = "Listinhas.html";
+        }
+    
+        // Função para ir para a página Home/início
+        function goHome() {
+            window.location.href = "inicio_app.html";
+        }
+    
+        // ---- NOVO SCRIPT ADICIONADO AQUI ----
+        window.onload = function() {
+            const selectedPlayer = localStorage.getItem('selectedPlayer');
+            if (selectedPlayer) {
+                document.querySelector('.title').innerText = `Nova Lista - ${selectedPlayer.toUpperCase()}`;
+            }
+        };
+    </script>
+</body>
+</html>

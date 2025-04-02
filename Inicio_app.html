@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escolha Seu Jogador</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Fundo com arco-íris em efeito carrossel contínuo */
+        body:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400%;
+            height: 100%;
+            /* Repetimos o vermelho depois do violeta para criar continuidade */
+            background: linear-gradient(
+                45deg, 
+                #ff0000 0%, #ff0000 10%, /* Vermelho início */
+                #ff8000 15%, #ff8000 25%, /* Laranja */
+                #ffff00 30%, #ffff00 40%, /* Amarelo */
+                #00ff00 45%, #00ff00 55%, /* Verde */
+                #0000ff 60%, #0000ff 70%, /* Azul */
+                #4b0082 75%, #4b0082 85%, /* Indigo */
+                #8f00ff 90%, #8f00ff 95%, /* Violeta */
+                #ff0000 100% /* Vermelho novamente para continuidade */
+            );
+            background-size: 50% 100%; /* A imagem ocupa só metade da largura */
+            background-repeat: repeat-x; /* Repete horizontalmente */
+            z-index: -1;
+            animation: rainbow-scroll 16s linear infinite;
+        }
+        
+        @keyframes rainbow-scroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%); /* Apenas metade, pois estamos repetindo */
+            }
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            z-index: 1;
+        }
+        
+        .title {
+            background-color: rgba(255, 107, 107, 0.9); /* Vermelho com transparência */
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .players-container {
+            background-color: rgba(100, 149, 237, 0.8); /* Azul com transparência */
+            padding: 30px;
+            border-radius: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .player-button {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .player-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .player-button:active {
+            transform: scale(0.95);
+        }
+        
+        .player-icon {
+            font-size: 36px;
+            color: #333;
+        }
+        
+        /* Layout responsivo */
+        @media (max-width: 480px) {
+            .players-container {
+                padding: 20px;
+            }
+            
+            .player-button {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="rainbow-bg">
+    <div class="container">
+        <div class="title">ESCOLHA SEU JOGADOR</div>
+        <div class="players-container">
+            <button class="player-button" onclick="selectPlayer('leo')">👤 Leo</button>
+            <button class="player-button" onclick="selectPlayer('kdu-caio')">👤 Kdu/Caio</button>
+            <button class="player-button" onclick="selectPlayer('yumi')">👤 Yumi</button>
+        </div>
+    </div>
+
+    <script>
+        function selectPlayer(player) {
+            localStorage.setItem('selectedPlayer', player);
+            window.location.href = "escolha_corre.html";
+        }
+        function selecionarJogador(nomeJogador) {
+         localStorage.setItem('jogadorSelecionado', nomeJogador);
+         window.location.href = "listas_salvas.html"; // Redireciona para a página das listas
+}
+    </script>
+</body>
+</html>
